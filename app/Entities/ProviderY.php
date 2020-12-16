@@ -12,14 +12,17 @@ class ProviderY implements EntityInterface
 {
     private $path = 'providers/DataProviderY.json';
 
+    /**
+     * @desc get data from json file
+     * @return array
+     */
     public function getData(): array
     {
         // TODO: Implement getData() method.
 
-        try
-        {
+        try {
             $json = file_get_contents(storage_path($this->path));
-            return json_decode($json,true);
+            return json_decode($json, true);
         } catch (FileNotFoundException $exception) {
             response()->json([
                 'status' => 'File not found!',
