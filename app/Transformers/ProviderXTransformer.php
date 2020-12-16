@@ -19,12 +19,35 @@ class ProviderXTransformer implements ProviderTransformerInterface
                 'parentAmount' => $provider['parentAmount'],
                 'currency' => $provider['Currency'],
                 'parentEmail' => $provider['parentEmail'],
-                'statusCode' => $provider['statusCode'],
+                'statusCode' => $this->checkAndConvertStatusCode($provider['statusCode']),
                 'registrationDate' => $provider['registerationDate'],
                 'parentIdentification' => $provider['parentIdentification'],
                 'provider' => 'DataProviderX'
             ];
         }
         return $data;
+    }
+
+    /**
+     * @param $status
+     * @return int
+     */
+    private function checkAndConvertStatusCode($status)
+    {
+        switch ($status) {
+            case (1):
+                $code = 'authorised';
+                break;
+            case (2):
+                $code = 'decline';
+                break;
+            case (3):
+                $code = 'refunded';
+                break;
+            default :
+                $code = 'unknown';
+                break;
+        }
+        return $code;
     }
 }

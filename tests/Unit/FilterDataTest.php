@@ -7,6 +7,10 @@ use App\Entities\ProviderY;
 use App\Repositories\UserRepository;
 use App\Transformers\ProviderXTransformer;
 use App\Transformers\ProviderYTransformer;
+use App\Utilities\Filters\CurrencyFilter;
+use App\Utilities\Filters\ProviderFilter;
+use App\Utilities\Filters\RangeFilter;
+use App\Utilities\Filters\StatusCodeFilter;
 use Illuminate\Support\Arr;
 use Nahid\JsonQ\Jsonq;
 use Tests\TestCase;
@@ -18,9 +22,6 @@ class FilterDataTest extends TestCase
     private $providerXTransformerMockery;
     private $providerYTransformerMockery;
     private $userRepositoryMockery;
-
-    protected $repo;
-
     public function setUp(): void
     {
 
@@ -74,5 +75,61 @@ class FilterDataTest extends TestCase
         $this->assertContains('DataProviderY', $providers);
 
     }
+
+    /**
+     * @test
+     */
+    function can_apply_filter_by_provider()
+    {
+        $data = $this->userRepositoryMockery->mergeDataFromProviders();
+        $data = $this->userRepositoryMockery->convertDataToCollection($data);
+        $providerXData = $this->providerXMockery->getData()['users'];
+
+        $filteredData = ProviderFilter::apply($data,'DataProviderX')->get();
+        $this->assertEquals(count($providerXData),count($filteredData));
+        $this->assertEquals($filteredData[0]['provider'],'DataProviderX');
+        $this->assertEquals($filteredData[1]['provider'],'DataProviderX');
+    }
+
+     /**
+     * @test
+     */
+    function can_apply_filter_by_status_code()
+    {
+        $data = $this->userRepositoryMockery->mergeDataFromProviders();
+        $data = $this->userRepositoryMockery->convertDataToCollection($data);
+        $filteredData = StatusCodeFilter::apply($data,'authorised')->get();
+        $this->assertEquals($filteredData[0]['statusCode'],'authorised');
+
+    }
+
+    /**
+     * @test
+     */
+    public function can_apply_filter_by_balance()
+    {
+        $data = $this->userRepositoryMockery->mergeDataFromProviders();
+        $data = $this->userRepositoryMockery->convertDataToCollection($data);
+        $filteredData = RangeFilter::apply($data,array('balanceMin'=>200,'balanceMax'=>400))->get();
+        if (!empty($filteredData))
+        {
+            $this->assertGreaterThanOrEqual(200,$filteredData[0]['parentAmount']);
+            $this->assertLessThanOrEqual(400,$filteredData[0]['parentAmount']);
+        }
+
+    }
+
+
+    /**
+     * @test
+     */
+    function can_apply_filter_by_currency()
+    {
+        $data = $this->userRepositoryMockery->mergeDataFromProviders();
+        $data = $this->userRepositoryMockery->convertDataToCollection($data);
+        $filteredData = CurrencyFilter::apply($data,'EUR')->get();
+        $this->assertEquals($filteredData[0]['currency'],'EUR');
+    }
+
 
 }

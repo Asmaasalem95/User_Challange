@@ -35,13 +35,16 @@ class ProviderYTransformer implements ProviderTransformerInterface
     {
         switch ($status) {
             case (100):
-                $code =  1;
+                $code = 'authorised';
                 break;
             case (200):
-                $code = 2;
+                $code = 'decline';
                 break;
             case (300):
-                $code = 3;
+                $code = 'refunded';
+                break;
+            default :
+                $code = 'unknown';
                 break;
         }
         return $code;
