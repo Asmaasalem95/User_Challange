@@ -58,10 +58,11 @@ class UserRepository implements UserRepositoryInterface
 
                 $data = RangeFilter::apply($data, array('balanceMin' => $filters['balanceMin'], 'balanceMax' => $filters['balanceMax']));
             }
-            if (isset($filters['adults_number'])) {
+            if (isset($filters['currency'])) {
                 $data =  CurrencyFilter::apply($data, $filters['currency']);
             }
-            return $data->get();
+
+            return $data->get()->toArray();
 
         } catch (ConditionNotAllowedException $exception) {
             return response()->json([

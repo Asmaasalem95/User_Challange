@@ -8,13 +8,6 @@ use Tests\TestCase;
 
 class FilterUsersTest extends TestCase
 {
-/*
-    public function orderTickets($concert,$params)
-    {
-        return   $this->json('GET', "/api/users/{$concert->id}/orders",$params);
-    }*/
-
-
     /**
      * @test
      */
@@ -52,6 +45,20 @@ class FilterUsersTest extends TestCase
         $response->assertStatus(422);
         $response->assertJson(['status'=>"Invalid inputs!"]);
     }
+
+    /**
+     * @test
+     */
+    function user_can_get_filtered_data()
+    {
+        $response = $this->json('GET','/api/users?statusCode=authorised');
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['status','data']);
+        $this->assertSame($response['data'][0]['statusCode'],'authorised');
+
+    }
+
+
 
 
 }

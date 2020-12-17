@@ -16,6 +16,6 @@ class ProviderFilter implements FilterInterface
     public static function apply($data, $value)
     {
         // TODO: Implement apply() method.
-        return $data->where('provider', $value)->get();
+        return $data->where('provider', $value);
     }
 }
